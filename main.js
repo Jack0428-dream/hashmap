@@ -57,6 +57,10 @@ class Linkedlist {
         }
     }
 
+    changeHead() {
+        this.head = this.head.next;
+    }
+
     tail() {
         if(this.head === null) {
             return null
@@ -74,23 +78,85 @@ class Linkedlist {
     pop() {
         let current = this.head;
         
-        for(let i = 0; i <= this.size()-2; i++) {
+        for(let i = 0; i < this.size(); i++) {
             current = current.next;
         }
 
         current.next = null;
     }
 
-    contains(value) {
+    changeAdr(item) {
         let current = this.head;
 
         for(let i = 0; i < this.size(); i++) {
-            if(current.value === value) {
-                return current.value;
+            if(current.value[0] === item) {
+                current = current.next.next;
+                return true;
             } else {
                 current = current.next;
             }
         }
+
+        return false;
+    }
+
+    contains(value) {
+        let current = this.head;
+
+        for(let i = 0; i < this.size(); i++) {
+            if(current.value[0] === value) {
+                return true;
+            } else {
+                current = current.next;
+            }
+        }
+
+        return false;
+    }
+
+    find(value) {
+        let current = this.head;
+        let index = 0;
+
+        for(let i = 0; i < this.size(); i++) {
+            if(current.value[0] === value) {
+                return index
+            } else {
+                current = current.next;
+                index += 1;
+            } 
+        }
+
+        return false;
+    }
+
+    change(key, newValue) {
+        let current = this.head;
+
+        for(let i = 0; i < this.size(); i++) {
+            if(current.value[0] === key) {
+                current.value[1] = newValue;
+                return;
+            } else {
+                current = current.next;
+            }
+        }
+
+
+    }
+
+    get(key) {
+        let current = this.head;
+
+        for(let i = 0; i < this.size(); i++) {
+            if(current.value[0] === key) {
+                return current.value[1];
+            } else {
+                current = current.next;
+            }
+        }
+
+        return false;
     }
 
     toString() {
@@ -133,6 +199,7 @@ class HashMap {
     // chance of collision up -> use modulo % on each iteration instead of outside the loop at the end
 
     set(key, value) {
+        // make buckets as a linkedList
         if(this.buckets.length === Math.trunc(this.capacity)) {
             for(let i = 0; i <= this.buckets.length; i++) {
                 this.buckets.push(null);
@@ -141,23 +208,52 @@ class HashMap {
 
         let index = this.hash(key);
 
-        if(this.buckets[index][0] === key) {
-            this.buckets[index][1] = value;
-        } else if(this.buckets[index][0] !== key) {
-
-        } 
+        if(this.buckets[index] === null ) {
+            this.buckets[index] = new Linkedlist;
+            this.buckets[index] = list;
+            list.append([key, value]);
+        } else if(list.contains(key)) {
+            // overwrite the old value
+            list.change(key, value);
+        } else {
+            list.append([key, value]);
+        }
     }
 
     get(key) {
-
+        for(let i = 0; i < this.buckets.length; i++) {
+            if(this.buckets[i].contains(key)) {
+                return this.buckets[i].get(key);
+            }
+        }
+        
+        return false;
     }
 
     has(key) {
-
+        for(let i = 0; i < this.buckets.length; i++) {
+            if(this.buckets[i].contains(key)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 
     remove(key) {
-
+        for(let i = 0; i < this.buckets.length; i++) {
+            if(this.buckets[i].contains(key) && this.buckets.head()[0] === key) {
+                this.buckets[i].changeHead();
+                return true;
+            } else if(this.buckets[i].contains(key) && this.buckets.tail()[0] === key) {
+                this.buckets[i].pop();
+                return true;
+            } else if(this.buckets[i].contains(key) && this.buckets.head()[0] !== key && this.buckets.tail()[0] !== key) {
+                this.buckets.changeAdr(key);
+            } else {
+                return false;
+            }
+        }
     }
 
     length() {
