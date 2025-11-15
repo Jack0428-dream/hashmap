@@ -257,19 +257,63 @@ class HashMap {
     }
 
     length() {
+      let total = 0;
+      
+      for(let i = 0; i < this.buckets.length; i++) {
+        if(this.buckets[i] !== null) {
+            total += this.buckets[i].size()
+        }
+      }
 
+      return total;
     }
 
     keys() {
+        let keyArr = [];
 
+        for(let i = 0; i < this.buckets.length; i++) {
+            if(this.buckets[i] !== null) {
+                for(let j = 0; j < this.buckets[i].size(); j++) {
+                    let current = this.buckets[i]
+                    keyArr.push(current.value[0])
+                    current = current.next;
+                }
+            }
+        }
+
+        return keyArr;
     }
 
     values() {
+        let valueArr = [];
 
+        for(let i = 0; i < this.buckets.length; i++) {
+            if(this.buckets[i] !== null) {
+                for(let j = 0; j < this.buckets[i].size(); j++) {
+                    let current = this.buckets[i]
+                    valueArr.push(current.value[1])
+                    current = current.next;
+                }
+            }
+        }
+
+        return valueArr;
     }
 
     entries() {
+        let pairArr = [];
 
+        for(let i = 0; i < this.buckets.length; i++) {
+            if(this.buckets[i] !== null) {
+                for(let j = 0; j < this.buckets[i].size(); j++) {
+                    let current = this.buckets[i]
+                    pairArr.push(current.value);
+                    current = current.next;
+                }
+            }
+        }
+
+        return pairArr;
     }
 
 }
