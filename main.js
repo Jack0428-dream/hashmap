@@ -1,11 +1,12 @@
 // if (index < 0 || index >= buckets.length) {
 //     throw new Error("Trying to access index out of bounds");
 // }
+
 class Node {
 
-    constructor(value = null, next = null) {
+    constructor(value = null, nextNode = null) {
         this.value = value;
-        this.next = next;
+        this.nextNode = nextNode;
     }
 }
 
@@ -16,98 +17,104 @@ class Linkedlist {
     }
 
     append(value) {
-        let node = new Node(value, null);
+        const node = new Node(value, null);
 
         if(this.head === null) {
             this.head = node;
         } else {
             let current = this.head;
 
-            while(current.next) {
-                current = current.next;
+            while(current.nextNode !== null) {
+                current = current.nextNode;
             }
 
-            current.next = node;
+            current.nextNode = node;
+        }
+    }
+
+    prepend(value) {
+        const node = new Node(value, null);
+
+        if(this.head === null) {
+            this.head = node;
+        } else {
+            let current = this.head;
+            node.nextNode = current;
+            this.head = node;
         }
     }
 
     size() {
-        if(this.head === null) {
-            return 0
-        } else {
-            let current = this.head;
-            let total = 0;
+        let current = this.head;
+        let number = 0;
 
-            while(current.next) {
-                total += 1;
-
-                current = current.next;
-            }
-            total += 1;
-
-            return total
+        while(current !== null) {
+            number += 1;
+            current = current.nextNode;
         }
+
+        return number;
     }
 
-    head() {
+    headNode() {
         if(this.head === null) {
-            return null
+            return console.log("This list is empty");
         } else {
-            return this.head.value;
+            return this.head;
         }
-    }
-
-    changeHead() {
-        this.head = this.head.next;
     }
 
     tail() {
         if(this.head === null) {
-            return null
+            return console.log("This list is empty");
         } else {
             let current = this.head;
 
-            while(current.next) {
-                current = current.next;
+            while(current.nextNode !== null) {
+                current = current.nextNode;
             }
 
-            return current.value;
+            return current;
+        }
+    }
+
+    at(index) {
+
+        if(index >= this.size()) {
+            return console.error("Index exceeds the size of the list");
+        }
+
+        if(index === 0) {
+            return this.head;
+        } else if(index > 0) {
+            let current = this.head;
+
+            for(let i = 1; i <= index; i++) {
+                current = current.nextNode;
+            }
+
+            return current;
         }
     }
 
     pop() {
         let current = this.head;
-        
-        for(let i = 0; i < this.size(); i++) {
-            current = current.next;
+
+        while(current.nextNode.nextNode !== null) {
+            current = current.nextNode;
         }
 
-        current.next = null;
-    }
-
-    changeAdr(item) {
-        let current = this.head;
-
-        for(let i = 0; i < this.size(); i++) {
-            if(current.value[0] === item) {
-                current = current.next.next;
-                return true;
-            } else {
-                current = current.next;
-            }
-        }
-
-        return false;
+        current.nextNode = null;
     }
 
     contains(value) {
         let current = this.head;
 
-        for(let i = 0; i < this.size(); i++) {
-            if(current.value[0] === value) {
+        while(current !== null) {
+            if(current.value === value) {
                 return true;
             } else {
-                current = current.next;
+                current = current.nextNode;
             }
         }
 
@@ -115,65 +122,79 @@ class Linkedlist {
     }
 
     find(value) {
+        //returns the index of the node containing value
         let current = this.head;
         let index = 0;
 
-        for(let i = 0; i < this.size(); i++) {
-            if(current.value[0] === value) {
-                return index
+        while(current.value !== null) {
+            if(current.value === value) {
+                return index;
             } else {
-                current = current.next;
                 index += 1;
-            } 
-        }
-
-        return false;
-    }
-
-    change(key, newValue) {
-        let current = this.head;
-
-        for(let i = 0; i < this.size(); i++) {
-            if(current.value[0] === key) {
-                current.value[1] = newValue;
-                return;
-            } else {
-                current = current.next;
+                current = current.nextNode;
             }
         }
 
-
+        return null;
     }
-
-    get(key) {
-        let current = this.head;
-
-        for(let i = 0; i < this.size(); i++) {
-            if(current.value[0] === key) {
-                return current.value[1];
-            } else {
-                current = current.next;
-            }
-        }
-
-        return false;
-    }
-
+    
     toString() {
         let current = this.head;
-        let base = "-> null";
-        let string = "";
+        let string = "null";
+        let string2 = "";
 
-        for(let i = 0; i < this.size(); i++) {
-            string += `(${current.value}) -> `
-
-            current = current.next;
+        while(current.nextNode !== null) {
+            string2 += `( ${current.value} ) -> `;
+            current = current.nextNode;
         }
 
-        string.concat(base);
+        string2 += `( ${current.value} ) -> `;
+        let result = string2.concat(string);
+        return console.log(result);
     }
-}
 
+    insertAt(value, index) {
+        if(index > this.size()) {
+            console.error("Index exceeds the size of the list");
+        }
+
+        if(index === 0) {
+            const node = new Node(value, null);
+
+            node.nextNode = this.head;
+            this.head = node;
+        } else if(index > 0) {
+            const node = new Node(value, null);
+            let current = this.head;
+
+            for(let i = 1; i < index; i++) {
+                current = current.nextNode;
+            }
+
+            node.nextNode = current.nextNode;
+            current.nextNode = node;
+        }
+    }
+
+    removeAt(index) {
+        if(index > this.size()) {
+            console.error("Index exceeds the size od the list");
+        }
+
+        if(index === 0) {
+            this.head = this.head.nextNode;
+        } else if (index > 0) {
+            let current = this.head;
+
+            for(let i = 0; i < index; i++) {
+                current = current.nextNode;
+            }
+
+            current.nextNode = current.nextNode.nextNode;
+        }
+    }
+
+}
 
 class HashMap {
     
@@ -210,9 +231,11 @@ class HashMap {
 
         if(this.buckets[index] === null ) {
             this.buckets[index] = new Linkedlist;
-            this.buckets[index] = list;
+            let list = this.buckets[index];
             list.append([key, value]);
-        } else if(list.contains(key)) {
+        } 
+        
+        if(list.contains(key)) {
             // overwrite the old value
             list.change(key, value);
         } else {
@@ -242,13 +265,13 @@ class HashMap {
 
     remove(key) {
         for(let i = 0; i < this.buckets.length; i++) {
-            if(this.buckets[i].contains(key) && this.buckets.head()[0] === key) {
+            if(this.buckets[i].contains(key) && this.buckets.findHead()[0] === key) {
                 this.buckets[i].changeHead();
                 return true;
             } else if(this.buckets[i].contains(key) && this.buckets.tail()[0] === key) {
                 this.buckets[i].pop();
                 return true;
-            } else if(this.buckets[i].contains(key) && this.buckets.head()[0] !== key && this.buckets.tail()[0] !== key) {
+            } else if(this.buckets[i].contains(key) && this.buckets.findHead()[0] !== key && this.buckets.tail()[0] !== key) {
                 this.buckets.changeAdr(key);
             } else {
                 return false;
@@ -319,3 +342,17 @@ class HashMap {
 }
 
 
+const test = new HashMap();
+
+test.set('apple', 'red')
+test.set('banana', 'yellow')
+test.set('carrot', 'orange')
+test.set('dog', 'brown')
+test.set('elephant', 'gray')
+test.set('frog', 'green')
+test.set('grape', 'purple')
+test.set('hat', 'black')
+test.set('ice cream', 'white')
+test.set('jacket', 'blue')
+test.set('kite', 'pink')
+test.set('lion', 'golden')
