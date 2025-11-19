@@ -79,9 +79,9 @@ class Linkedlist {
     }
 
     at(index) {
-
         if(index >= this.size()) {
-            return console.error("Index exceeds the size of the list");
+            console.error("Index exceeds the size of the list");
+            return null;
         }
 
         if(index === 0) {
@@ -98,13 +98,20 @@ class Linkedlist {
     }
 
     pop() {
-        let current = this.head;
+        if(this.head === null) {
+            console.error("This list is empty");
+            return null;
+        } else if(this.head !== null && this.head.nextNode === null) {
+            this.head = null;
+        } else {
+            let current = this.head;
 
-        while(current.nextNode.nextNode !== null) {
-            current = current.nextNode;
+            while(current.nextNode.nextNode !== null) {
+                current = current.nextNode;
+            }
+
+            current.nextNode = null;
         }
-
-        current.nextNode = null;
     }
 
     contains(value) {
@@ -126,7 +133,7 @@ class Linkedlist {
         let current = this.head;
         let index = 0;
 
-        while(current.value !== null) {
+        while(current !== null) {
             if(current.value === value) {
                 return index;
             } else {
@@ -154,8 +161,9 @@ class Linkedlist {
     }
 
     insertAt(value, index) {
-        if(index > this.size()) {
+        if(index >= this.size()) {
             console.error("Index exceeds the size of the list");
+            return null;
         }
 
         if(index === 0) {
@@ -177,8 +185,9 @@ class Linkedlist {
     }
 
     removeAt(index) {
-        if(index > this.size()) {
+        if(index >= this.size()) {
             console.error("Index exceeds the size od the list");
+            return null;
         }
 
         if(index === 0) {
@@ -186,13 +195,14 @@ class Linkedlist {
         } else if (index > 0) {
             let current = this.head;
 
-            for(let i = 0; i < index; i++) {
+            for(let i = 1; i < index; i++) {
                 current = current.nextNode;
             }
 
             current.nextNode = current.nextNode.nextNode;
         }
     }
+
 
 }
 
@@ -202,7 +212,7 @@ class HashMap {
         this.initial = 16;
         this.buckets = new Array(this.initial).fill(null);
         this.loadFacotr = 0.75;
-        this.capacity = this.buckets.length * 0.75
+        this.capacity = 0;
     }
 
     hash(key) {
@@ -220,124 +230,150 @@ class HashMap {
     // chance of collision up -> use modulo % on each iteration instead of outside the loop at the end
 
     set(key, value) {
-        // make buckets as a linkedList
-        if(this.buckets.length === Math.trunc(this.capacity)) {
-            for(let i = 0; i <= this.buckets.length; i++) {
+        // if the buckets size exceeds the capacity then double the buckets length.
+        let size = 0;
+        for(let i = 0; i < this.buckets.length; i++) {
+            if(this.buckets[i] !== null) {
+                size += 1;
+            }
+        }
+        
+        if(size === (this.initial * this.loadFacotr).toFixed(0)) {
+            while(this.buckets.length <= this.initial * 2) {
                 this.buckets.push(null);
             }
+            this.initial *= 2;
         }
 
+        // If the index of the array is empty then store the pair
+        // if not, compare the key 
+        // if the keys are same, then overwrite the value its new one
+        // if not, make it linkedlist and save it to nextNode.
         let index = this.hash(key);
+        let strArr = this.buckets[index];
 
-        if(this.buckets[index] === null ) {
-            this.buckets[index] = new Linkedlist;
-            let list = this.buckets[index];
-            list.append([key, value]);
-        } 
-        
-        if(list.contains(key)) {
-            // overwrite the old value
-            list.change(key, value);
+        if(strArr === null) {
+            strArr = [key, value];
+        } else if(strArr[0] === key) {
+            strArr[1] = value;
         } else {
+            const list = new Linkedlist;
+            list.append([strArr[0], strArr[1]]);
             list.append([key, value]);
-        }
-    }
 
-    get(key) {
-        for(let i = 0; i < this.buckets.length; i++) {
-            if(this.buckets[i].contains(key)) {
-                return this.buckets[i].get(key);
-            }
+            strArr = list;
         }
         
-        return false;
     }
 
-    has(key) {
+    // get(key) {
+    //     let index = this.hash(key);
+    //     let strArr = this.buckets[index];
+
+    //     if(strArr === null) {
+    //         return null;
+    //     } else if(strArr[0] === key) {
+    //         return strArr[1];
+    //     } else if(strArr.contains(key)) {
+    //         return strArr.at(strArr.find(key)).value[1]
+    //     }
+    // }
+
+    // has(key) {
+    //     let index = this.hash(key);
+    //     let strArr = this.buckets[index];
+
+    //     if(strArr !== null && strArr === key) {
+    //         return true;
+    //     } else if(strArr !== null && strArr.contains(key)) {
+    //         return true 
+    //     } else {
+    //         return false;
+    //     }
+    // }
+
+    // remove(key) {
+    //     let index = this.hash(key);
+    //     let strArr = this.buckets[index];
+
+    //     if(strArr[0] === key) {
+    //         strArr = null;
+    //         return true;
+    //     } else if(strArr.contains(key)) {
+    //         strArr.removeAt(strArr.find(key));
+    //         return true;
+    //     } else {
+    //         return false;
+    //     }
+    // }
+
+    // length() {
+    //     let total = 0;
+
+    //     for(let i = 0; i < this.buckets.length; i++) {
+    //         if(this.buckets[i][0]) {
+    //             total += 1;
+    //         } else if(this.buckets[i].size()) {
+    //             total += this.buckets[i].size();
+    //         }
+    //     }   
+
+    //     return total;
+    // }
+
+    clear() {
         for(let i = 0; i < this.buckets.length; i++) {
-            if(this.buckets[i].contains(key)) {
-                return true;
-            } else {
-                return false;
-            }
+            this.buckets[i] = null;
         }
     }
 
-    remove(key) {
-        for(let i = 0; i < this.buckets.length; i++) {
-            if(this.buckets[i].contains(key) && this.buckets.findHead()[0] === key) {
-                this.buckets[i].changeHead();
-                return true;
-            } else if(this.buckets[i].contains(key) && this.buckets.tail()[0] === key) {
-                this.buckets[i].pop();
-                return true;
-            } else if(this.buckets[i].contains(key) && this.buckets.findHead()[0] !== key && this.buckets.tail()[0] !== key) {
-                this.buckets.changeAdr(key);
-            } else {
-                return false;
-            }
-        }
-    }
+    // keys() {
+    //     let keyArr = [];
 
-    length() {
-      let total = 0;
-      
-      for(let i = 0; i < this.buckets.length; i++) {
-        if(this.buckets[i] !== null) {
-            total += this.buckets[i].size()
-        }
-      }
+    //     for(let i = 0; i < this.buckets.length; i++) {
+    //         if(this.buckets[i][0]) {
+    //             keyArr.push(this.buckets[i][0]);
+    //         } else if(this.buckets[i].size()) {
+    //             for(let j = 0; j < this.buckets[i].size(); j++) {
+    //                 keyArr.push(this.buckets[i].at(j)[0])
+    //             }
+    //         }
+    //     }
 
-      return total;
-    }
+    //     return keyArr;
+    // }
 
-    keys() {
-        let keyArr = [];
+    // values() {
+    //     let valueArr = [];
 
-        for(let i = 0; i < this.buckets.length; i++) {
-            if(this.buckets[i] !== null) {
-                for(let j = 0; j < this.buckets[i].size(); j++) {
-                    let current = this.buckets[i]
-                    keyArr.push(current.value[0])
-                    current = current.next;
-                }
-            }
-        }
+    //     for(let i = 0; i < this.buckets.length; i++) {
+    //         if(this.buckets[i][1]) {
+    //             valueArr.push(this.buckets[i][1]);
+    //         } else if(this.buckets[i].size()) {
+    //             for(let j = 0; j < this.buckets[i].size(); j++) {
+    //                 valueArr.push(this.buckets[i].at(j)[1])
+    //             }
+    //         }
+    //     }
 
-        return keyArr;
-    }
+    //     return valueArr;
+    // }
 
-    values() {
-        let valueArr = [];
+    // entries() {
+    //     let pairArr = [];
 
-        for(let i = 0; i < this.buckets.length; i++) {
-            if(this.buckets[i] !== null) {
-                for(let j = 0; j < this.buckets[i].size(); j++) {
-                    let current = this.buckets[i]
-                    valueArr.push(current.value[1])
-                    current = current.next;
-                }
-            }
-        }
+    //     for(let i = 0; i < this.buckets.length; i++) {
+    //         if(this.buckets[i][0]) {
+    //             pairArr.push(this.buckets[i]);
+    //         } else if(this.buckets[i].size()) {
+    //             for(let j = 0; j < this.buckets[i].size(); j++) {
+    //                 pairArr.push(this.buckets[i].at(j))
+    //             }
+    //         }
+    //     }
 
-        return valueArr;
-    }
-
-    entries() {
-        let pairArr = [];
-
-        for(let i = 0; i < this.buckets.length; i++) {
-            if(this.buckets[i] !== null) {
-                for(let j = 0; j < this.buckets[i].size(); j++) {
-                    let current = this.buckets[i]
-                    pairArr.push(current.value);
-                    current = current.next;
-                }
-            }
-        }
-
-        return pairArr;
-    }
+    //     return pairArr;
+    // }
 
 }
 
@@ -356,3 +392,5 @@ test.set('ice cream', 'white')
 test.set('jacket', 'blue')
 test.set('kite', 'pink')
 test.set('lion', 'golden')
+
+test.entries();
