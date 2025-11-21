@@ -410,10 +410,10 @@ class HashMap {
 
         for(let i = 0; i < this.buckets.length; i++) {
             if(Array.isArray(this.buckets[i])) {
-                keyArr.push(this.buckets[i]);
+                pairArr.push(this.buckets[i]);
             } else if(this.buckets[i] instanceof Linkedlist) {
                 for(let j = 0; j < this.buckets[i].size(); j++) {
-                    keyArr.push(this.buckets[i].at(j).value)
+                    pairArr.push(this.buckets[i].at(j).value)
                 }
             }
         }
@@ -439,4 +439,6 @@ test.set('jacket', 'blue')
 test.set('kite', 'pink')
 test.set('lion', 'golden')
 
-test.keys();
+console.log(test.keys());
+console.log(test.values());
+console.log(test.entries());
