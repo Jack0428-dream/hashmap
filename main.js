@@ -357,9 +357,9 @@ class HashMap {
         let total = 0;
 
         for(let i = 0; i < this.buckets.length; i++) {
-            if(this.buckets[i][0]) {
+            if(Array.isArray(this.buckets[i])) {
                 total += 1;
-            } else if(this.buckets[i].size()) {
+            } else if(this.buckets[i] instanceof Linkedlist) {
                 total += this.buckets[i].size();
             }
         }   
@@ -377,11 +377,11 @@ class HashMap {
         let keyArr = [];
 
         for(let i = 0; i < this.buckets.length; i++) {
-            if(this.buckets[i][0]) {
+            if(Array.isArray(this.buckets[i])) {
                 keyArr.push(this.buckets[i][0]);
-            } else if(this.buckets[i].size()) {
+            } else if(this.buckets[i] instanceof Linkedlist) {
                 for(let j = 0; j < this.buckets[i].size(); j++) {
-                    keyArr.push(this.buckets[i].at(j)[0])
+                    keyArr.push(this.buckets[i].at(j).value[0])
                 }
             }
         }
@@ -393,11 +393,11 @@ class HashMap {
         let valueArr = [];
 
         for(let i = 0; i < this.buckets.length; i++) {
-            if(this.buckets[i][1]) {
+            if(Array.isArray(this.buckets[i])) {
                 valueArr.push(this.buckets[i][1]);
-            } else if(this.buckets[i].size()) {
+            } else if(this.buckets[i] instanceof Linkedlist) {
                 for(let j = 0; j < this.buckets[i].size(); j++) {
-                    valueArr.push(this.buckets[i].at(j)[1])
+                    valueArr.push(this.buckets[i].at(j).value[1])
                 }
             }
         }
@@ -409,11 +409,11 @@ class HashMap {
         let pairArr = [];
 
         for(let i = 0; i < this.buckets.length; i++) {
-            if(this.buckets[i][0]) {
-                pairArr.push(this.buckets[i]);
-            } else if(this.buckets[i].size()) {
+            if(Array.isArray(this.buckets[i])) {
+                keyArr.push(this.buckets[i]);
+            } else if(this.buckets[i] instanceof Linkedlist) {
                 for(let j = 0; j < this.buckets[i].size(); j++) {
-                    pairArr.push(this.buckets[i].at(j))
+                    keyArr.push(this.buckets[i].at(j).value)
                 }
             }
         }
