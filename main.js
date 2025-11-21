@@ -322,30 +322,35 @@ class HashMap {
 
     has(key) {
         let index = this.hash(key);
-        let strArr = this.buckets[index];
 
-        if(strArr !== null && strArr === key) {
+        if(Array.isArray(this.buckets[index]) && this.buckets[index][0] === key) {
             return true;
-        } else if(strArr !== null && strArr.contains(key)) {
-            return true 
-        } else {
-            return false;
+        } else if(this.buckets[index] instanceof Linkedlist) {
+            for(let i = 0; i < this.buckets[index].size(); i++) {
+                if(this.buckets[index].at(i).value[0] === key) {
+                    return true;
+                }
+            }
         }
+
+        return null;
     }
 
     remove(key) {
         let index = this.hash(key);
-        let strArr = this.buckets[index];
 
-        if(strArr[0] === key) {
-            strArr = null;
+        if(Array.isArray(this.buckets[index]) === this.buckets[index][0] === key) {
+            this.buckets[index] = null;
             return true;
-        } else if(strArr.contains(key)) {
-            strArr.removeAt(strArr.find(key));
-            return true;
-        } else {
-            return false;
+        } else if(this.buckets[index] instanceof Linkedlist) {
+            for(let i = 0; i < this.buckets[index].size(); i++) {
+                if(this.buckets[index].at(i).value[0] === key) {
+                    this.buckets[index].removeAt(i);
+                    return true;
+                }
+            }
         }
+        return false;
     }
 
     length() {
